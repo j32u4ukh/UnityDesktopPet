@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 using UnityEngine;
 
 public enum Anim
@@ -12,23 +13,35 @@ public enum Anim
 [RequireComponent(typeof(Animator))]
 public class PetManager : MonoBehaviour
 {
-    //SpriteRenderer sprite_renderer;
+    SpriteRenderer sprite_renderer;
+    BoxCollider2D m_collider;
     Animator animator;
     Anim anim;
 
+    Vector3 collider_offset, cursor_offset;
+
     bool is_dragging = false;
+    Vector3 last_screen_point = Vector3.zero;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    static extern bool SetCursorPos(int X, int Y);
 
     // Start is called before the first frame update
     void Start()
     {
-        //sprite_renderer = GetComponent<SpriteRenderer>();
+        sprite_renderer = GetComponent<SpriteRenderer>();
+        m_collider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
         anim = Anim.Idle;
+
+        collider_offset = new Vector3(m_collider.size.x / 2, m_collider.size.y / 2, 0f);
 
         if (animator == null)
         {
             Debug.LogError("There is no Animator.");
         }
+
+        
     }
 
     // Update is called once per frame
@@ -49,26 +62,90 @@ public class PetManager : MonoBehaviour
             turnAround();
         }
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetKeyDown(KeyCode.Alpha7))
         {
-            //RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            setCursorPosition(100, 100);
+        }
 
-            //if (hit.collider != null)
-            //{
-            //    Debug.Log("Target Position: " + hit.collider.gameObject.transform.position);
-            //}
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            setCursorPosition(960, 540);
+        }
 
-            Debug.Log($"Input.mousePosition: {Input.mousePosition}");
-            Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Debug.Log($"point: {point}");
-            Collider2D collider = Physics2D.OverlapPoint(point);
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            Debug.Log($"mousePosition: {vector3ToString(mousePosition)}");
+
+            // z = -10
+            Vector3 world_point = Camera.main.ScreenToWorldPoint(mousePosition);
+            //Debug.Log($"world_point: {world_point}");
+
+            //Vector3 ScreenPoint = Camera.main.WorldToScreenPoint(world_point);
+            //Debug.Log($"ScreenPoint: {ScreenPoint}");
+
+            BoxCollider2D collider = (BoxCollider2D)Physics2D.OverlapPoint(world_point);
 
             if (collider != null)
             {
-                Debug.Log($"collider: {collider.name}");
-                collider.transform.position = new Vector3(point.x, point.y, 0f);
+                is_dragging = true;
+
+                Vector3 world_top_right = collider.bounds.center + collider_offset;
+                (Vector3 screen, Vector3 world) cursor = getCursorPosition(world_position: world_top_right);
+                //Debug.Log($"world_top_right: {vector3ToString(world_top_right)}, cursor.world: {vector3ToString(cursor.world)}");
+
+                //Vector3 screen_top_right = Camera.main.WorldToScreenPoint(world_point);
+                //Debug.Log($"screen_top_right: {vector3ToString(screen_top_right)}, cursor.screen: {vector3ToString(cursor.screen)}");
+
+                // real offset in world coordinate(z = 0)
+                cursor_offset = cursor.world - collider.bounds.center;
+
+                //Vector3 tr_world = Camera.main.ScreenToWorldPoint(tr_screen);
+                //Vector3 tr_screen_modify = Camera.main.WorldToScreenPoint(new Vector3((int)tr_world.x, (int)tr_world.y, -10f));
+                //screen_cursor_offset = tr_screen_modify - collider.bounds.center;
+
+                //// z = 10
+                //Vector3 tr_cursor = tr_screen_modify - screen_cursor_offset;
+                //tr_cursor.z = -10f;
+                //Vector3 cursor = Camera.main.WorldToScreenPoint(tr_cursor);
+
+                //Debug.Log($"center: {collider.bounds.center}, tr_screen: {tr_screen}, tr_world: {tr_world}\n" +
+                //          $"tr_world_modify: {new Vector3((int)tr_world.x, (int)tr_world.y, tr_world.z)}, tr_screen_modify: {tr_screen_modify}, cursor_offset: {screen_cursor_offset}");
+                //Debug.Log($"(mousePosition: {mousePosition}, tr_screen_modify - cursor_offset: {tr_screen_modify - screen_cursor_offset}, cursor: {cursor})");
+
+                last_screen_point = cursor.screen;
+                //last_point.z = -10f;
+
+                //setCursorPosition((int)cursor.screen.x, (int)cursor.screen.y);
+                Mouse.current.WarpCursorPosition(cursor.screen);
+                Debug.Log($"Input.mousePosition: {Mouse.current.position.ReadDefaultValue()}, cursor.screen: {vector3ToString(cursor.screen)}");
             }
         }
+        //else if (Input.GetMouseButton(0) && is_dragging)
+        //{
+        //    Debug.Log($"Input.mousePosition: {Input.mousePosition}, last_point: {last_screen_point}");
+
+        //    if (Input.mousePosition != last_screen_point)
+        //    {
+        //        // z = -10
+        //        Vector3 world_point = Camera.main.ScreenToWorldPoint(Input.mousePosition) - cursor_offset;
+        //        transform.position = world_point;
+
+        //        //transform.position = new Vector3(point.x - SIZE, point.y - SIZE, 0f);
+        //        //transform.position = new Vector3(point.x, point.y, 0f);
+        //    }
+        //}
+        //else if (Input.GetMouseButtonUp(0))
+        //{
+        //    if (is_dragging)
+        //    {
+        //        //Vector3 cursor = Camera.main.WorldToScreenPoint(last_point + new Vector3(SIZE, SIZE, 0f));
+        //        //Debug.Log($"(last_point: {last_point}, cursor: {cursor})");
+        //        //SetCursorPos((int)cursor.x, (int)cursor.y);
+        //        is_dragging = false;
+        //    }
+        //}
+
     }
 
     private void FixedUpdate()
@@ -89,26 +166,26 @@ public class PetManager : MonoBehaviour
 
     private void turnAround()
     {
-        //sprite_renderer.flipX = !sprite_renderer.flipX;
+        sprite_renderer.flipX = !sprite_renderer.flipX;
     }
 
-    //private void OnMouseDown()
-    //{
-    //    Debug.Log($"name: {gameObject.name}");
-    //    is_dragging = true;
-    //}
+    public (Vector3 screen, Vector3 world) getCursorPosition(Vector3 world_position)
+    {
+        Vector3 screen_position = Camera.main.WorldToScreenPoint(world_position);
+        Vector3 screen_cursor = new Vector3((int)screen_position.x, (int)screen_position.y, screen_position.z);
+        screen_cursor.z = 0;
+        Vector3 world_cursor = Camera.main.ScreenToWorldPoint(screen_cursor);
 
-    //private void OnMouseDrag()
-    //{
-    //    if (is_dragging)
-    //    {
-    //        Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    //        transform.position = new Vector3(point.x, point.y, 0f);
-    //    }
-    //}
+        return (screen_cursor, world_cursor);
+    }
 
-    //private void OnMouseUp()
-    //{
-    //    is_dragging = false;
-    //}
+    public void setCursorPosition(int x, int y)
+    {
+        SetCursorPos(x, Screen.height - y);
+    }
+
+    string vector3ToString(Vector3 v)
+    {
+        return string.Format("({0:F4}, {1:F4}, {2:F4})", v.x, v.y, v.z);
+    }
 }
