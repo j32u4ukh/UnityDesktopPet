@@ -254,7 +254,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -321,7 +321,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 67.54443, y: -24.600952}
+  m_AnchoredPosition: {x: 374, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1174203871
@@ -411,7 +411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1437373068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,10 +547,6 @@ PrefabInstance:
     - target: {fileID: 1396355062660636121, guid: bdc30c1bb6179694dae0c0ded32f657f, type: 3}
       propertyPath: m_Name
       value: DesktopPet
-      objectReference: {fileID: 0}
-    - target: {fileID: 1396355062660636121, guid: bdc30c1bb6179694dae0c0ded32f657f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdc30c1bb6179694dae0c0ded32f657f, type: 3}

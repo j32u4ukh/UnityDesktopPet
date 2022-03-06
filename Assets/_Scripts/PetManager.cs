@@ -10,11 +10,13 @@ public enum Anim
 }
 
 [RequireComponent(typeof(Animator))]
-public class AnimationManager : MonoBehaviour
+public class PetManager : MonoBehaviour
 {
     //SpriteRenderer sprite_renderer;
     Animator animator;
     Anim anim;
+
+    bool is_dragging = false;
 
     // Start is called before the first frame update
     void Start()
@@ -49,16 +51,22 @@ public class AnimationManager : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
+            //RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+            //if (hit.collider != null)
+            //{
+            //    Debug.Log("Target Position: " + hit.collider.gameObject.transform.position);
+            //}
+
             Debug.Log($"Input.mousePosition: {Input.mousePosition}");
             Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            point.z = 0;
             Debug.Log($"point: {point}");
             Collider2D collider = Physics2D.OverlapPoint(point);
 
-            if(collider != null)
+            if (collider != null)
             {
                 Debug.Log($"collider: {collider.name}");
-                collider.transform.position = point;
+                collider.transform.position = new Vector3(point.x, point.y, 0f);
             }
         }
     }
@@ -83,4 +91,24 @@ public class AnimationManager : MonoBehaviour
     {
         //sprite_renderer.flipX = !sprite_renderer.flipX;
     }
+
+    //private void OnMouseDown()
+    //{
+    //    Debug.Log($"name: {gameObject.name}");
+    //    is_dragging = true;
+    //}
+
+    //private void OnMouseDrag()
+    //{
+    //    if (is_dragging)
+    //    {
+    //        Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    //        transform.position = new Vector3(point.x, point.y, 0f);
+    //    }
+    //}
+
+    //private void OnMouseUp()
+    //{
+    //    is_dragging = false;
+    //}
 }

@@ -61,7 +61,7 @@ public class TransparentWindow : MonoBehaviour
 
     void Start()
     {
-//#if !UNITY_EDITOR
+#if !UNITY_EDITOR
         window = GetActiveWindow();
 
         // Make background transparent
@@ -83,9 +83,9 @@ public class TransparentWindow : MonoBehaviour
         // 狀態機，呼叫一次後就會修改狀態，除非再次呼叫，否則下次執行不同場景也會被影響
         //SetWindowPos(window, HWND_TOPMOST, 0, 0, Screen.width, Screen.height, 0);
         SetWindowPos(window, HWND_TOPMOST, 0, 0, 0, 0, 0);
-        //#endif
 
         Application.runInBackground = true;
+#endif
     }
 
     private void Update()
