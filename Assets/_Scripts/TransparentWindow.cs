@@ -35,6 +35,9 @@ public class TransparentWindow : MonoBehaviour
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
+    [DllImport("user32.dll")]
+    private static extern int SetLayeredWindowAttributes(IntPtr hWnd, uint crKey, byte bAlpha, uint dwFlags);
+
     // Definitions of window styles
     const int GWL_STYLE = -16;
     const uint WS_POPUP = 0x80000000;
@@ -50,6 +53,7 @@ public class TransparentWindow : MonoBehaviour
     IntPtr window;
 
     static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+    const uint LWA_COLORKEY = 0x00000001;
 
     /* NOTE: 
      * # Project Settings > Player > Resolution and Presentation > Use DXGI Flip Model Swapchain for D3D11(DO NOT CHECK)
@@ -70,7 +74,10 @@ public class TransparentWindow : MonoBehaviour
         //bool result = SetWindowPos(GetForegroundWindow(), window, 0, 0, resolutions[0].width, resolutions[0].height, SWP_SHOWWINDOW);
 
         //SetWindowLong(window, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-        SetWindowLong(window, GWL_EX_STYLE, WS_LAYERED | WS_TRANSPARENT);
+
+        //SetWindowLong(window, GWL_EX_STYLE, WS_LAYERED | WS_TRANSPARENT);
+        SetWindowLong(window, GWL_EX_STYLE, WS_LAYERED);
+        SetLayeredWindowAttributes(window, 0, 0, LWA_COLORKEY);
 
         //SetWindowLong(window, GWL_EX_STYLE, WS_TOPMOST | WS_LAYERED | WS_TRANSPARENT);
         // 狀態機，呼叫一次後就會修改狀態，除非再次呼叫，否則下次執行不同場景也會被影響
@@ -83,16 +90,30 @@ public class TransparentWindow : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(0))
-        {
-            ReleaseCapture();
-            SendMessage(window, 0xA1, 0x02, 0);
-            SendMessage(window, 0x0202, 0, 0);
-        }
+        //if (Input.GetMouseButton(0))
+        //{
+        //    ReleaseCapture();
+        //    SendMessage(window, 0xA1, 0x02, 0);
+        //    SendMessage(window, 0x0202, 0, 0);
+        //}
 
-        if (Input.GetMouseButton(1))
+        //if (Input.GetMouseButton(1))
+        //{
+        //    // TODO: Settings
+        //}
+
+        //SetClickThrough(Physics2D.OverlapPoint(Input.mousePosition) == null);
+    }
+
+    private void SetClickThrough(bool click_through)
+    {
+        if (click_through)
         {
-            // TODO: Settings
+            SetWindowLong(window, GWL_EX_STYLE, WS_LAYERED | WS_TRANSPARENT);
+        }
+        else
+        {
+            SetWindowLong(window, GWL_EX_STYLE, WS_LAYERED);
         }
     }
 }

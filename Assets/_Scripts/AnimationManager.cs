@@ -12,14 +12,14 @@ public enum Anim
 [RequireComponent(typeof(Animator))]
 public class AnimationManager : MonoBehaviour
 {
-    SpriteRenderer sprite_renderer;
+    //SpriteRenderer sprite_renderer;
     Animator animator;
     Anim anim;
 
     // Start is called before the first frame update
     void Start()
     {
-        sprite_renderer = GetComponent<SpriteRenderer>();
+        //sprite_renderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         anim = Anim.Idle;
 
@@ -46,6 +46,21 @@ public class AnimationManager : MonoBehaviour
         {
             turnAround();
         }
+
+        if (Input.GetMouseButton(0))
+        {
+            Debug.Log($"Input.mousePosition: {Input.mousePosition}");
+            Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            point.z = 0;
+            Debug.Log($"point: {point}");
+            Collider2D collider = Physics2D.OverlapPoint(point);
+
+            if(collider != null)
+            {
+                Debug.Log($"collider: {collider.name}");
+                collider.transform.position = point;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -66,6 +81,6 @@ public class AnimationManager : MonoBehaviour
 
     private void turnAround()
     {
-        sprite_renderer.flipX = !sprite_renderer.flipX;
+        //sprite_renderer.flipX = !sprite_renderer.flipX;
     }
 }
