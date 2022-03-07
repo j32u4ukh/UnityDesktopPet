@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 
 public enum Anim
 {
@@ -64,12 +65,25 @@ public class PetManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
-            setCursorPosition(100, 100);
+            Debug.Log($"Mouse: {vector2ToString(Mouse.current.position.ReadValue())}");
+            Debug.Log($"mousePosition: {vector2ToString(Input.mousePosition)}");
+            
+            Mouse.current.WarpCursorPosition(new Vector2(1920.0f, 1080.0f));
+
+            Debug.Log($"Mouse: {vector2ToString(Mouse.current.position.ReadValue())}");
+            Debug.Log($"mousePosition: {vector2ToString(Input.mousePosition)}");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            setCursorPosition(960, 540);
+            Debug.Log($"mousePosition: {vector2ToString(Input.mousePosition)}, Mouse: {vector2ToString(Mouse.current.position.ReadValue())}");
+            Mouse.current.WarpCursorPosition(new Vector2(960.0f, 540.0f));
+
+            InputState.Change(Mouse.current.position, new Vector2(960.0f, 540.0f));
+
+            Debug.Log($"x: {Mouse.current.position.x.ReadValue()}, y: {Mouse.current.position.y.ReadValue()}");
+
+            Debug.Log($"mousePosition: {vector2ToString(Input.mousePosition)}, Mouse: {vector2ToString(Mouse.current.position.ReadValue())}");
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -86,40 +100,40 @@ public class PetManager : MonoBehaviour
 
             BoxCollider2D collider = (BoxCollider2D)Physics2D.OverlapPoint(world_point);
 
-            if (collider != null)
-            {
-                is_dragging = true;
+            //if (collider != null)
+            //{
+            //    is_dragging = true;
 
-                Vector3 world_top_right = collider.bounds.center + collider_offset;
-                (Vector3 screen, Vector3 world) cursor = getCursorPosition(world_position: world_top_right);
-                //Debug.Log($"world_top_right: {vector3ToString(world_top_right)}, cursor.world: {vector3ToString(cursor.world)}");
+            //    Vector3 world_top_right = collider.bounds.center + collider_offset;
+            //    (Vector3 screen, Vector3 world) cursor = getCursorPosition(world_position: world_top_right);
+            //    //Debug.Log($"world_top_right: {vector3ToString(world_top_right)}, cursor.world: {vector3ToString(cursor.world)}");
 
-                //Vector3 screen_top_right = Camera.main.WorldToScreenPoint(world_point);
-                //Debug.Log($"screen_top_right: {vector3ToString(screen_top_right)}, cursor.screen: {vector3ToString(cursor.screen)}");
+            //    //Vector3 screen_top_right = Camera.main.WorldToScreenPoint(world_point);
+            //    //Debug.Log($"screen_top_right: {vector3ToString(screen_top_right)}, cursor.screen: {vector3ToString(cursor.screen)}");
 
-                // real offset in world coordinate(z = 0)
-                cursor_offset = cursor.world - collider.bounds.center;
+            //    // real offset in world coordinate(z = 0)
+            //    cursor_offset = cursor.world - collider.bounds.center;
 
-                //Vector3 tr_world = Camera.main.ScreenToWorldPoint(tr_screen);
-                //Vector3 tr_screen_modify = Camera.main.WorldToScreenPoint(new Vector3((int)tr_world.x, (int)tr_world.y, -10f));
-                //screen_cursor_offset = tr_screen_modify - collider.bounds.center;
+            //    //Vector3 tr_world = Camera.main.ScreenToWorldPoint(tr_screen);
+            //    //Vector3 tr_screen_modify = Camera.main.WorldToScreenPoint(new Vector3((int)tr_world.x, (int)tr_world.y, -10f));
+            //    //screen_cursor_offset = tr_screen_modify - collider.bounds.center;
 
-                //// z = 10
-                //Vector3 tr_cursor = tr_screen_modify - screen_cursor_offset;
-                //tr_cursor.z = -10f;
-                //Vector3 cursor = Camera.main.WorldToScreenPoint(tr_cursor);
+            //    //// z = 10
+            //    //Vector3 tr_cursor = tr_screen_modify - screen_cursor_offset;
+            //    //tr_cursor.z = -10f;
+            //    //Vector3 cursor = Camera.main.WorldToScreenPoint(tr_cursor);
 
-                //Debug.Log($"center: {collider.bounds.center}, tr_screen: {tr_screen}, tr_world: {tr_world}\n" +
-                //          $"tr_world_modify: {new Vector3((int)tr_world.x, (int)tr_world.y, tr_world.z)}, tr_screen_modify: {tr_screen_modify}, cursor_offset: {screen_cursor_offset}");
-                //Debug.Log($"(mousePosition: {mousePosition}, tr_screen_modify - cursor_offset: {tr_screen_modify - screen_cursor_offset}, cursor: {cursor})");
+            //    //Debug.Log($"center: {collider.bounds.center}, tr_screen: {tr_screen}, tr_world: {tr_world}\n" +
+            //    //          $"tr_world_modify: {new Vector3((int)tr_world.x, (int)tr_world.y, tr_world.z)}, tr_screen_modify: {tr_screen_modify}, cursor_offset: {screen_cursor_offset}");
+            //    //Debug.Log($"(mousePosition: {mousePosition}, tr_screen_modify - cursor_offset: {tr_screen_modify - screen_cursor_offset}, cursor: {cursor})");
 
-                last_screen_point = cursor.screen;
-                //last_point.z = -10f;
+            //    last_screen_point = cursor.screen;
+            //    //last_point.z = -10f;
 
-                //setCursorPosition((int)cursor.screen.x, (int)cursor.screen.y);
-                Mouse.current.WarpCursorPosition(cursor.screen);
-                Debug.Log($"Input.mousePosition: {Mouse.current.position.ReadDefaultValue()}, cursor.screen: {vector3ToString(cursor.screen)}");
-            }
+            //    //setCursorPosition((int)cursor.screen.x, (int)cursor.screen.y);
+            //    Mouse.current.WarpCursorPosition(cursor.screen);
+            //    Debug.Log($"Input.mousePosition: {Mouse.current.position.ReadDefaultValue()}, cursor.screen: {vector3ToString(cursor.screen)}");
+            //}
         }
         //else if (Input.GetMouseButton(0) && is_dragging)
         //{
@@ -182,6 +196,11 @@ public class PetManager : MonoBehaviour
     public void setCursorPosition(int x, int y)
     {
         SetCursorPos(x, Screen.height - y);
+    }
+
+    string vector2ToString(Vector2 v)
+    {
+        return string.Format("({0:F4}, {1:F4})", v.x, v.y);
     }
 
     string vector3ToString(Vector3 v)
