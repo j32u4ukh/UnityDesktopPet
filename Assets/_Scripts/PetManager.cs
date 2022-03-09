@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.InputSystem;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
-using System;
 
 public enum Anim
 {
@@ -12,6 +10,7 @@ public enum Anim
     Walk
 }
 
+// 管理 Pet 與使用者之間的互動
 [RequireComponent(typeof(Animator))]
 public class PetManager : MonoBehaviour
 {
@@ -20,12 +19,10 @@ public class PetManager : MonoBehaviour
     Animator animator;
     Anim anim;
 
-    Vector3 collider_offset, offset;
-
+    Vector3 offset;
     bool is_dragging = false;
-    Vector3 last_screen_point = Vector3.zero;
 
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    [DllImport("user32.dll")]
     static extern bool SetCursorPos(int X, int Y);
 
     // Start is called before the first frame update
@@ -35,14 +32,7 @@ public class PetManager : MonoBehaviour
         m_collider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
         anim = Anim.Idle;
-
-        collider_offset = new Vector3(m_collider.size.x / 2, m_collider.size.y / 2, 0f);
-        offset = Vector3.zero;
-
-        if (animator == null)
-        {
-            Debug.LogError("There is no Animator.");
-        }        
+        offset = Vector3.zero;      
     }
 
     // Update is called once per frame
@@ -66,13 +56,10 @@ public class PetManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePosition = Input.mousePosition;
-            //Vector3 mousePosition = Mouse.current.position.ReadValue();
-            Debug.Log($"mousePosition: {vector3ToString(mousePosition)}");
+            Debug.Log($"mousePosition: {mousePosition.formatString()}");
 
-            // z = -10
             Vector3 world_point = Camera.main.ScreenToWorldPoint(mousePosition);
-            //world_point.z = 0f;
-            Debug.Log($"world_point: {vector3ToString(world_point)}");
+            Debug.Log($"world_point: {world_point.formatString()}");
 
             BoxCollider2D collider = (BoxCollider2D)Physics2D.OverlapPoint(world_point);
 
@@ -80,7 +67,7 @@ public class PetManager : MonoBehaviour
             {
                 is_dragging = true;
                 offset = collider.bounds.center - world_point;
-                Debug.Log($"offset: {vector3ToString(offset)}, center: {vector3ToString(collider.bounds.center)}, world_point: {vector3ToString(world_point)}");
+                Debug.Log($"offset: {offset.formatString()}, center: {collider.bounds.center.formatString()}, world_point: {world_point.formatString()}");
             }
         }
         else if (Input.GetMouseButtonUp(0))
@@ -115,11 +102,11 @@ public class PetManager : MonoBehaviour
         {
             // z = -10
             Vector3 world_point = Camera.main.ScreenToWorldPoint(Input.mousePosition) + offset;
-            //world_point.z = 0f;
 
             if(Vector3.Distance(transform.position, world_point) > 0.05f)
             {
-                Debug.Log($"transform.position: {transform.position}, world_point: {world_point}, Distance: {Vector3.Distance(transform.position, world_point)}");
+                Debug.Log($"transform.position: {transform.position.formatString()}, world_point: {world_point.formatString()}, " +
+                          $"Distance: {Vector3.Distance(transform.position, world_point)}");
                 transform.position = world_point;
             }
         }
@@ -130,18 +117,17 @@ public class PetManager : MonoBehaviour
         sprite_renderer.flipX = !sprite_renderer.flipX;
     }
 
-    public void setCursorPosition(int x, int y)
+    private static void setCursorPosition(float x, float y, bool new_input_system = true)
     {
-        SetCursorPos(x, Screen.height - y);
-    }
-
-    string vector2ToString(Vector2 v)
-    {
-        return string.Format("({0:F4}, {1:F4})", v.x, v.y);
-    }
-
-    string vector3ToString(Vector3 v)
-    {
-        return string.Format("({0:F4}, {1:F4}, {2:F4})", v.x, v.y, v.z);
+        if (new_input_system)
+        {
+            Vector2 destination = new Vector2(x, y);
+            Mouse.current.WarpCursorPosition(destination);
+            InputState.Change(Mouse.current.position, destination);
+        }
+        else
+        {
+            SetCursorPos((int)x, Screen.height - (int)y);
+        }
     }
 }

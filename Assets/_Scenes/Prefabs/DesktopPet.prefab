@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1396355062660636123}
   - component: {fileID: 1396355062660636122}
   - component: {fileID: 1740161}
+  - component: {fileID: 2074578072653093504}
   - component: {fileID: 1290360625}
   m_Layer: 0
   m_Name: DesktopPet
@@ -130,6 +131,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 5, y: 5}
   m_EdgeRadius: 0
+--- !u!114 &2074578072653093504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1396355062660636121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0e88ac0fa494d64a8786f3411658b6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1290360625
 MonoBehaviour:
   m_ObjectHideFlags: 0
