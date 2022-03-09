@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1740161}
   - component: {fileID: 2074578072653093504}
   - component: {fileID: 1290360625}
+  - component: {fileID: 3092278707649085141}
   m_Layer: 0
   m_Name: DesktopPet
   m_TagString: Untagged
@@ -153,5 +154,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cba30bb7aac8e284b8137484aebe4592, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3092278707649085141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1396355062660636121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab46f42f2b6aaf148908a1ae36c9dbf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
