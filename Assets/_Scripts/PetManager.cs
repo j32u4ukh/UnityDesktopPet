@@ -5,9 +5,29 @@ using UnityEngine.InputSystem.LowLevel;
 
 public enum Anim
 {
+    Walk = -3,
+    Riding = -2,
     Idle = -1,
     Maguma = 0,
-    Walk
+    Sleeping,
+    Petting,
+    Drinking,
+    Valentine,
+    Knocking,
+    Fire,
+    Lost,
+    Confuse,
+    Petted,
+
+    Nervous,
+    Henshin,
+    Flying,
+    Camping,
+    Lucky,
+    Unlucky,
+    Punching,
+    Combo,
+    Birthday
 }
 
 // 管理 Pet 與使用者之間的互動
@@ -56,15 +76,17 @@ public class PetManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M) || Input.GetKeyDown(KeyCode.Alpha0))
+        // 使用 else if，避免多個動畫同時觸發
+        #region 定義按鈕與觸發動畫
+        if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             anim = Anim.Maguma;
         }
-
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Alpha1))
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             anim = Anim.Walk;
-        }
+        } 
+        #endregion
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -99,6 +121,7 @@ public class PetManager : MonoBehaviour
         y_move = Input.GetAxisRaw("Vertical") * speed;
         is_moving = move();
 
+        // 若正在移動，則優先播放走路動畫
         if (is_moving)
         {
             anim = Anim.Walk;
