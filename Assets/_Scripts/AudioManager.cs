@@ -18,6 +18,11 @@ public class AudioManager : MonoBehaviour
         audio_source.Play();
     }
 
+    public void interruptAudio()
+    {
+        audio_source.Stop();
+    }
+
     public void playAudio0()
     {
         playAudio(clip: audio0);
