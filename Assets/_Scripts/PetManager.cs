@@ -27,6 +27,10 @@ public class PetManager : MonoBehaviour
     [DllImport("user32.dll")]
     static extern bool SetCursorPos(int X, int Y);
 
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetCursorPos(out MousePosition lpMousePosition);
+
     // Start is called before the first frame update
     void Start()
     {
@@ -102,6 +106,13 @@ public class PetManager : MonoBehaviour
         {
             Vector3 mousePosition = Input.mousePosition;
             Debug.Log($"mousePosition: {mousePosition.formatString()}");
+
+            bool got_cursor_positon = GetCursorPos(out MousePosition lpMousePosition);
+
+            if (got_cursor_positon)
+            {
+                Debug.Log($"lpMousePosition: {lpMousePosition}");
+            }
 
             Vector3 world_point = Camera.main.ScreenToWorldPoint(mousePosition);
             Debug.Log($"world_point: {world_point.formatString()}");
@@ -322,5 +333,17 @@ public class PetManager : MonoBehaviour
         {
             SetCursorPos((int)x, Screen.height - (int)y);
         }
+    }
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct MousePosition
+{
+    public int x;
+    public int y;
+
+    public override string ToString()
+    {
+        return "[" + x + ", " + y + "]";
     }
 }
