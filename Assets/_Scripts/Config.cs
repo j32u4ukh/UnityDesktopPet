@@ -4,5 +4,5 @@ using UnityEngine;
 
 public static class Config
 {
-    public static bool use_dual_screen = false;
+    public static bool use_dual_screen = true;
 }
