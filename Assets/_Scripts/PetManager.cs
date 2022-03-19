@@ -26,11 +26,11 @@ public class PetManager : MonoBehaviour
             dual.enabled = false;
         }
 
-        Debug.Log($"[PetManager] Awake | #Display: {Display.displays.Length}");
+        //Debug.Log($"[PetManager] Awake | #Display: {Display.displays.Length}");
 
-        for (int i = 0; i < Display.displays.Length; i++)
-        {
-            Display.displays[i].Activate();
-        }
+        //for (int i = 0; i < Display.displays.Length; i++)
+        //{
+        //    Display.displays[i].Activate();
+        //}
     }
 }
