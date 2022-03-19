@@ -10,10 +10,10 @@ public class Builder
         Debug.Log($"[Builder] OnPostprocessBuild | target: {target}, path: {path}");
         Debug.Log($"#screen: {Display.displays.Length}");
 
-        //if (Config.use_dual_screen)
+        //if (PetManager.use_dual_screen)
         //{
         //    Debug.Log($"[Builder] OnPostprocessBuild | Dual screen");
-        //    PlayerSettings.cursorHotspot = new Vector2(x: 1920.0f * 2.0f, y: 1080.0f);
+        //    PlayerSettings.cursorHotspot = new Vector2(x: Display.displays[0].systemWidth * 2.0f, y: 1080.0f);
         //}
         //else
         //{

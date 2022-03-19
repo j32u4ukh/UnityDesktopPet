@@ -24,8 +24,13 @@ public abstract class ScreenManager : MonoBehaviour
     protected readonly float size = 0.5f;
     protected float x_position, y_position, x_move, y_move, x_min, y_min, x_max, y_max;
 
+    // 取得滑鼠在螢幕上的絕對座標，即便 Unity 設定雙螢幕，在實際為單螢幕的情況下，點擊畫面正中間都會是 (960, 540)。原點在左上角，因此 Y 值由上往下越來越大。
     [DllImport("user32.dll")]
-    static extern bool SetCursorPos(int X, int Y);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    protected static extern bool GetCursorPos(out MousePosition lpMousePosition);
+
+    [DllImport("user32.dll")]
+    protected static extern bool SetCursorPos(int X, int Y);
 
     // 按下左鍵
     public abstract void getLeftMouseDown();
@@ -289,6 +294,53 @@ public abstract class ScreenManager : MonoBehaviour
         anim = Anim.Idle;
     }
 
+    /// <summary>
+    /// 根據滑鼠的 X 螢幕絕對座標，判斷目前在哪一個螢幕上。預設螢幕由左到右排列。
+    /// </summary>
+    /// <returns></returns>
+    protected static int getDisplayIndex()
+    {
+        bool got_cursor_positon = GetCursorPos(out MousePosition lpMousePosition);
+
+        if (!got_cursor_positon)
+        {
+            return -1;
+        }
+
+        int x = lpMousePosition.x, n_display = Display.displays.Length;
+
+        for (int i = 0; i < n_display; i++)
+        {
+            if (x <= Display.displays[i].systemWidth)
+            {
+                return i;
+            }
+            else
+            {
+                x -= Display.displays[i].systemWidth;
+            }
+        }
+
+        return n_display - 1;
+    }
+
+    /// <summary>
+    /// 取得滑鼠在螢幕上的絕對座標，將原點移到左下角
+    /// </summary>
+    /// <param name="z"></param>
+    /// <returns></returns>
+    protected static Vector3 getCursorPosition(float z = 0f)
+    {
+        bool got_cursor_positon = GetCursorPos(out MousePosition lpMousePosition);
+
+        if (got_cursor_positon)
+        {
+            return new Vector3(lpMousePosition.x, Screen.height - lpMousePosition.y, z);
+        }
+
+        return Vector3.zero;
+    }
+
     protected static void setCursorPosition(float x, float y, bool new_input_system = true)
     {
         if (new_input_system)
@@ -301,5 +353,17 @@ public abstract class ScreenManager : MonoBehaviour
         {
             SetCursorPos((int)x, Screen.height - (int)y);
         }
+    }
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct MousePosition
+{
+    public int x;
+    public int y;
+
+    public override string ToString()
+    {
+        return $"({x}, {y})";
     }
 }

@@ -368,14 +368,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: DesktopPet
       objectReference: {fileID: 0}
-    - target: {fileID: 5223001324610754243, guid: bdc30c1bb6179694dae0c0ded32f657f, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8601272239376731810, guid: bdc30c1bb6179694dae0c0ded32f657f, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdc30c1bb6179694dae0c0ded32f657f, type: 3}
 --- !u!1 &8966120959778477856

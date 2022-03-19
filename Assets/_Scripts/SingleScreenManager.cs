@@ -25,10 +25,10 @@ public class SingleScreenManager : ScreenManager
 
     public override void getLeftMouseDown()
     {
-        Vector3 mousePosition = Input.mousePosition;
-        Debug.Log($"mousePosition: {mousePosition.formatString()}");
+        Vector3 mouse_position = Input.mousePosition;
+        Debug.Log($"mouse_position: {mouse_position.formatString()}");
 
-        Vector3 world_point = camera1.ScreenToWorldPoint(mousePosition);
+        Vector3 world_point = camera1.ScreenToWorldPoint(mouse_position);
         Debug.Log($"world_point: {world_point.formatString()}");
 
         BoxCollider2D collider = (BoxCollider2D)Physics2D.OverlapPoint(world_point);
