@@ -50,6 +50,8 @@ public class WindowSetting : MonoBehaviour
 
     void Start()
     {
+        //Screen.SetResolution(1920, 1080, true);
+
         // 下方程式應確保不在編輯模式下執行，要打包成執行檔再執行
 #if !UNITY_EDITOR
         window = GetActiveWindow();
@@ -57,6 +59,8 @@ public class WindowSetting : MonoBehaviour
         // 視窗無邊框
         MARGINS margins = new MARGINS() { cxLeftWidth = -1 };
         DwmExtendFrameIntoClientArea(window, ref margins);
+
+        //SetWindowLong(window, GWL_EXSTYLE, WS_EX_LAYERED | 0x00000020);
 
         // GWL_EXSTYLE：擴充視窗屬性(Sets a new extended window style. )
         // WS_EX_LAYERED：將當前視窗設為"分層視窗"(The WS_EX_LAYERED style is supported for top-level windows and child windows.)
